@@ -55,16 +55,29 @@ sudo docker run -d -p 8108:8108 \
             --api-key=$TYPESENSE_API_KEY \
             --enable-cors
 
-# Клонирование и запуск Ocean Node
-sudo git clone https://github.com/oceanprotocol/ocean-node.git && cd ocean-node
+# Проверка, если папка ocean-node уже существует
+if [ ! -d "ocean-node" ]; then
+    sudo git clone https://github.com/oceanprotocol/ocean-node.git
+fi
 
-# Сборка образа (может занять до 15 минут в зависимости от оборудования)
-sudo docker build -t ocean-node:mybuild .
+cd ocean-node
 
-# Проверка успешности сборки
-if [[ "$(sudo docker images -q ocean-node:mybuild 2> /dev/null)" == "" ]]; then
-    echo "Ошибка: Образ ocean-node:mybuild не был создан. Проверьте логи сборки."
+# Проверка наличия Dockerfile
+if [ ! -f "Dockerfile" ]; then
+    echo "Ошибка: Dockerfile не найден в папке ocean-node."
     exit 1
+fi
+
+# Проверка наличия образа и его сборка при необходимости
+if [[ "$(sudo docker images -q ocean-node:mybuild 2> /dev/null)" == "" ]]; then
+    echo "Сборка Docker образа..."
+    sudo docker build -t ocean-node:mybuild .
+    if [[ $? -ne 0 ]]; then
+        echo "Ошибка: Сборка образа не удалась."
+        exit 1
+    fi
+else
+    echo "Образ ocean-node:mybuild уже существует."
 fi
 
 # Запрос приватного ключа у пользователя
