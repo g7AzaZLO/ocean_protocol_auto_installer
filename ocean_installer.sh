@@ -47,19 +47,19 @@ sudo apt install -y nodejs
 # Установка Typesense (API KEY - 'xyz' по умолчанию, вы можете изменить его)
 export TYPESENSE_API_KEY=xyz
     
-mkdir "$(pwd)"/typesense-data
+sudo mkdir "$(pwd)"/typesense-data
 
-docker run -d -p 8108:8108 \
+sudo docker run -d -p 8108:8108 \
             -v "$(pwd)"/typesense-data:/data typesense/typesense:26.0 \
             --data-dir /data \
             --api-key=$TYPESENSE_API_KEY \
             --enable-cors
 
 # Клонирование и запуск Ocean Node
-git clone https://github.com/oceanprotocol/ocean-node.git && cd ocean-node
+sudo git clone https://github.com/oceanprotocol/ocean-node.git && cd ocean-node
 
 # Сборка образа (может занять до 15 минут в зависимости от оборудования)
-docker build -t ocean-node:mybuild .
+sudo docker build -t ocean-node:mybuild .
 
 # Запрос приватного ключа у пользователя
 read -p "Введите ваш приватный ключ (в формате 0x...): " PRIVATE_KEY
@@ -136,6 +136,6 @@ EOF
 echo ".env файл создан и заполнен."
 
 # Запуск ноды
-docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 ocean-node:mybuild
+sudo docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 ocean-node:mybuild
 
 echo "Пожалуйста, подождите 5-10 минут, пока нода запускается. Проверьте статус на панели управления Ocean Node."
