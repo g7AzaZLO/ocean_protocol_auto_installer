@@ -136,6 +136,6 @@ EOF
 echo ".env файл создан и заполнен."
 
 # Запуск ноды
-sudo docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 ocean-node:mybuild
+docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 ocean-node:mybuild
 
 echo "Пожалуйста, подождите 5-10 минут, пока нода запускается. Проверьте статус на панели управления Ocean Node."
