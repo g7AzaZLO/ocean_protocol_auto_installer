@@ -61,6 +61,12 @@ sudo git clone https://github.com/oceanprotocol/ocean-node.git && cd ocean-node
 # Сборка образа (может занять до 15 минут в зависимости от оборудования)
 sudo docker build -t ocean-node:mybuild .
 
+# Проверка успешности сборки
+if [[ "$(sudo docker images -q ocean-node:mybuild 2> /dev/null)" == "" ]]; then
+    echo "Ошибка: Образ ocean-node:mybuild не был создан. Проверьте логи сборки."
+    exit 1
+fi
+
 # Запрос приватного ключа у пользователя
 read -p "Введите ваш приватный ключ (в формате 0x...): " PRIVATE_KEY
 
