@@ -13,9 +13,9 @@ echo -e "\033[1;32mG7 community: \033[5;31mhttps://t.me/g7monitor\033[0m"
 echo -e "\033[1;32mElatioNodes community: \033[5;31mhttps://discord.gg/KvQGajqDUW\033[0m"
 echo -e "\033[0m"
 
-# Проверка и установка Docker
+# Checking and installing Docker
 if ! command -v docker &> /dev/null; then
-    echo "Docker не установлен. Установка Docker..."
+    echo "Docker is not installed. Installing Docker..."
     sudo apt-get update
     sudo apt-get install -y \
         apt-transport-https \
@@ -31,20 +31,20 @@ if ! command -v docker &> /dev/null; then
     sudo usermod -aG docker $USER
     echo "Docker успешно установлен."
 else
-    echo "Docker уже установлен. Пропускаем установку."
+    echo "Docker is already installed. Skip the installation."
 fi
 
-# Обновление пакетов
+# Package Update
 sudo apt update && sudo apt upgrade -y
 
-# Установка необходимых пакетов
+# Installing the necessary packages
 sudo apt install screen curl iptables build-essential git wget jq make gcc nano tmux htop nvme-cli pkg-config libssl-dev libleveldb-dev tar net-tools clang git ncdu pkg-config libssl-dev -y
 
-# Установка NodeJS & NPM (версии 20.16.1 минимум)
+# Install NodeJS & NPM (version 20.16.1 minimum)
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 
-# Установка Typesense (API KEY - 'xyz' по умолчанию, вы можете изменить его)
+# Typesense installation (API KEY is 'xyz' by default, you can change it)
 export TYPESENSE_API_KEY=xyz
     
 sudo mkdir "$(pwd)"/typesense-data
@@ -55,39 +55,39 @@ sudo docker run -d -p 8108:8108 \
             --api-key=$TYPESENSE_API_KEY \
             --enable-cors
 
-# Проверка, если папка ocean-node уже существует
+# Check if the ocean-node folder already exists
 if [ ! -d "ocean-node" ]; then
     sudo git clone https://github.com/oceanprotocol/ocean-node.git
 fi
 
 cd ocean-node
 
-# Проверка наличия Dockerfile
+# Checking for a Dockerfile
 if [ ! -f "Dockerfile" ]; then
-    echo "Ошибка: Dockerfile не найден в папке ocean-node."
+    echo "Error: Dockerfile not found in ocean-node folder."
     exit 1
 fi
 
-# Проверка наличия образа и его сборка при необходимости
+# Check if the image is available and build it if necessary
 if [[ "$(sudo docker images -q ocean-node:mybuild 2> /dev/null)" == "" ]]; then
-    echo "Сборка Docker образа..."
+    echo "Docker image build..."
     sudo docker build -t ocean-node:mybuild .
     if [[ $? -ne 0 ]]; then
-        echo "Ошибка: Сборка образа не удалась."
+        echo "Error: Image build failed."
         exit 1
     fi
 else
-    echo "Образ ocean-node:mybuild уже существует."
+    echo "The ocean-node:mybuild image already exists."
 fi
 
 # Запрос приватного ключа у пользователя
-read -p "Введите ваш приватный ключ (в формате 0x...): " PRIVATE_KEY
+read -p "ВEnter your private key (in the format 0x...): " PRIVATE_KEY
 
 # Запрос IP-адреса у пользователя
-read -p "Введите IP-адрес вашего сервера: " SERVER_IP
+read -p "Enter the IP address of your server: " SERVER_IP
 
 # Запрос адреса кошелька 
-read -p "Введите адрес кошелька, с которого будете заходить в админ-панель: " ADMIN_ADDRESS
+read -p "Enter the address of the wallet from which you will enter the admin panel: " ADMIN_ADDRESS
 
 # Создание .env файла
 cat <<EOF > .env
@@ -152,10 +152,9 @@ P2P_BOOTSTRAP_NODES=
 P2P_FILTER_ANNOUNCED_ADDRESSES=
 EOF
 
-echo ".env файл создан и заполнен."
+echo ".env file is created and populated."
 
-# Запуск ноды
-pwd
+# Starting a node
 docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 ocean-node:mybuild
 
-echo "Пожалуйста, подождите 5-10 минут, пока нода запускается. Проверьте статус на панели управления Ocean Node."
+echo "Please wait 5-10 minutes for the node to start up. Check the status on the Ocean Node control panel."
