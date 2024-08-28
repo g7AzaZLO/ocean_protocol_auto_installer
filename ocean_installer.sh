@@ -105,7 +105,7 @@ PRIVATE_KEY=$PRIVATE_KEY
 ## core
 INDEXER_NETWORKS=["23295", "11155420"]
 RPCS={"23295":{"rpc":"https://testnet.sapphire.oasis.io","chainId":23295,"network":"oasis_saphire_testnet","chunkSize":100},"11155420":{"rpc":"https://sepolia.optimism.io","chainId":11155420,"network":"optimism-sepolia","chunkSize":100}}
-DB_URL=http://localhost:8108/?apiKey=xyz
+DB_URL=http://$SERVER_IP:8108/?apiKey=xyz
 IPFS_GATEWAY=https://ipfs.io/
 ARWEAVE_GATEWAY=https://arweave.net/
 LOAD_INITIAL_DDOS=
@@ -115,7 +115,7 @@ ADDRESS_FILE=
 NODE_ENV=
 AUTHORIZED_DECRYPTERS=
 OPERATOR_SERVICE_URL=
-INTERFACES=
+INTERFACES=["HTTP","P2P"]
 ALLOWED_VALIDATORS=
 INDEXER_INTERVAL=
 ALLOWED_ADMINS=["$ADMIN_ADDRESS"]
@@ -124,19 +124,19 @@ RATE_DENY_LIST=
 MAX_REQ_PER_SECOND=
 MAX_CHECKSUM_LENGTH=
 LOG_LEVEL=
-HTTP_API_PORT=
+HTTP_API_PORT=8000
 
 ## p2p
 
-P2P_ENABLE_IPV4=
-P2P_ENABLE_IPV6=
-P2P_ipV4BindAddress=
-P2P_ipV4BindTcpPort=
-P2P_ipV4BindWsPort=
-P2P_ipV6BindAddress=
-P2P_ipV6BindTcpPort=
-P2P_ipV6BindWsPort=
-P2P_ANNOUNCE_ADDRESSES=["/ip4/$SERVER_IP/tcp/8000"]
+P2P_ENABLE_IPV4=true
+P2P_ENABLE_IPV6=false
+P2P_ipV4BindAddress=0.0.0.0
+P2P_ipV4BindTcpPort=9000
+P2P_ipV4BindWsPort=9001
+P2P_ipV6BindAddress=::
+P2P_ipV6BindTcpPort=9002
+P2P_ipV6BindWsPort=9003
+P2P_ANNOUNCE_ADDRESSES=["/dns4/$SERVER_IP/tcp/9000/p2p/YOUR_NODE_ID_HERE", "/dns4/$SERVER_IP/ws/tcp/9001", "/dns6/$SERVER_IP/tcp/9002/p2p/YOUR_NODE_ID_HERE", "/dns6/$SERVER_IP/ws/tcp/9003"]
 P2P_ANNOUNCE_PRIVATE=
 P2P_pubsubPeerDiscoveryInterval=
 P2P_dhtMaxInboundStreams=
@@ -155,6 +155,6 @@ EOF
 echo ".env file is created and populated."
 
 # Starting a node
-docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 ocean-node:mybuild
+docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
 
 echo "Please wait 5-10 minutes for the node to start up. Check the status on the Ocean Node control panel."
