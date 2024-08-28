@@ -158,3 +158,4 @@ echo ".env file is created and populated."
 docker run --env-file .env -e 'getP2pNetworkStats' -p 8000:8000 -p 9000:9000 -p 9001:9001 -p 9002:9002 -p 9003:9003  ocean-node:mybuild
 
 echo "Please wait 5-10 minutes for the node to start up. Check the status on the Ocean Node control panel."
+echo "2nd part of instruction u can find here https://github.com/g7AzaZLO/ocean_protocol_auto_installer/tree/main"
